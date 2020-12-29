@@ -57,8 +57,10 @@ func shouldConnect() bool {
 func Connected() bool {
 	v := redisUp.Load()
 	if v != nil {
+		fmt.Printf("redis_cluster: Connected %b\n", v.(bool))
 		return v.(bool)
 	}
+	fmt.Printf("redis_cluster: Connected %b\n", false)
 	return false
 }
 
@@ -214,6 +216,7 @@ func NewRedisClusterPool(isCache bool) redis.UniversalClient {
 }
 
 func getRedisAddrs(config config.StorageOptionsConf) (addrs []string) {
+	fmt.Printf("Gamma #v+\n", config)
 	if len(config.Addrs) != 0 {
 		addrs = config.Addrs
 	} else {
@@ -259,6 +262,7 @@ func (r *RedisCluster) cleanKey(keyName string) string {
 
 func (r *RedisCluster) up() error {
 	if !Connected() {
+		fmt.Printf("Iota #v+", config.Global().Storage)
 		return ErrRedisIsDown
 	}
 	return nil

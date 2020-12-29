@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"fmt"
 
 	"github.com/go-redis/redis/v8"
 
@@ -59,12 +60,14 @@ func startPubSubLoop() {
 		err := cacheStore.StartPubSubHandler(RedisPubSubChannel, func(v interface{}) {
 			handleRedisEvent(v, nil, nil)
 		})
+		fmt.Printf("redis_signals: LOOP #v+\n", err)
 		if err != nil {
 			if err != storage.ErrRedisIsDown {
+				fmt.Printf("Alpha #v+\n", config.Global().Storage)
 				pubSubLog.WithField("err", err).Error("Connection to Redis failed, reconnect in 10s")
 			}
 			time.Sleep(10 * time.Second)
-			pubSubLog.Warning("Reconnecting ", err)
+			pubSubLog.Warning("Reconnecting zzz ", err)
 		}
 	}
 }
@@ -218,6 +221,7 @@ func (r *RedisNotifier) Notify(notif interface{}) bool {
 
 	if err := r.store.Publish(r.channel, string(toSend)); err != nil {
 		if err != storage.ErrRedisIsDown {
+			fmt.Printf("Beta #v+\n", config.Global().Storage)
 			pubSubLog.Error("Could not send notification: ", err)
 		}
 		return false
